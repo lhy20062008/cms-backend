@@ -1,0 +1,36 @@
+name: Build CmsBackend Gem & Publish
+on:
+  push:
+    branches:
+      - main
+jobs:
+
+  build-and-push:
+    name: Build Gem
+    runs-on: ubuntu-latest
+    env:
+      ORGANIZATION: lhy20062008
+
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Set Credentials
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+
+      - name: Publish to GitHub Packages
+        run: |
+          gem build 
+          gem push --KEY github --host https://rubygems.pkg.github.com/${ORGANIZATION} *.gem
+
+
